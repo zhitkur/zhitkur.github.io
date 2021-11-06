@@ -6,7 +6,7 @@ title: Windows driver - Callback routine
 ### Overview
 윈도우 드라이버의 `콜백`루틴을 생성하여 로드되는 이미지에 대한 알림을 받는 코드를 작성합니다.  
 > 백신 프로그램이나, 안티치트등과 같은 프로그램에서도 사용되는 루틴입니다.  
-> 여기서 이미지는 PE Image를 뜻하고, 프로세스 또는 쓰레드가 생성될 때를 의미합니다.  
+> 이미지는 PE Image를 뜻하고, 프로세스 또는 쓰레드가 생성될 때를 의미합니다.  
 
 여러가지 함수(`PsSetLoadImageNotifyRoutine`, `ObRegisterCallbacks`, ...)를 통해 루틴을 등록할 수 있는데, 저는 `PsSetLoadImageNotifyRoutine`함수를 사용하여 등록해 보겠습니다.  
 
@@ -31,9 +31,9 @@ void PloadImageNotifyRoutine(
 )
 ```
 
-- FullImageName : UNICODE_STRING으로 이루어진 이미지 파일 이름의 포인터 (e.g. notepad.exe)  
-- ProcessId : 이미지가 Mapping된 프로세스의 식별 값, 드라이버의 경우 0  (e.g. 1548)  
-- ImageInfo : 이미지 정보가 포함된 `IMAGE_INFO`구조체의 포인터  
+- `FullImageName` : UNICODE_STRING으로 이루어진 이미지 파일 이름의 포인터 (e.g. notepad.exe)  
+- `ProcessId` : 이미지가 Mapping된 프로세스의 식별 값, 드라이버의 경우 0  (e.g. 1548)  
+- `ImageInfo` : 이미지 정보가 포함된 `IMAGE_INFO`구조체의 포인터  
 
 ```c++
 typedef struct _IMAGE_INFO {
@@ -58,12 +58,12 @@ typedef struct _IMAGE_INFO {
 } IMAGE_INFO, *PIMAGE_INFO;
 ```
 
-- SystemModeImage : 드라이버와 같이 커널 모드의 구성요소의 경우 1(true), 유저모드에 매핑 된 이미지의 경우 0(false)  
-- ImageBase : 해당 이미지의 ImageBase  
+- `SystemModeImage` : 드라이버와 같이 커널 모드의 구성요소의 경우 1(true), 유저모드에 매핑 된 이미지의 경우 0(false)  
+- `ImageBase` : 해당 이미지의 ImageBase  
 
-위 `SystemModeImage`값을 통해 kernel-mode 혹은 user-mode에 대한 이미지 검색을 설정합니다.  
+> `SystemModeImage`값을 통해 kernel <-> user-mode에 대한 이미지 검색을 설정합니다.  
 
-### Source
+### Example Source
 ```c++
 const wchar_t* target_process[] = {L"NOTEPAD.EXE", L"IDA64.EXE"};
 
@@ -117,7 +117,7 @@ NTSTATUS driver_entry(PDRIVER_OBJECT pDrvObj, PUNICODE_STRING pRegPath)
 ### target_info
 해당 콜백함수의 역할은 매우 간단한 target_process 배열에 존재하는 프로세스 이름과 로드되는 이미지를 비교하여 로드될 때 Log 매크로를 통해 타겟의 정보를 로그로 남깁니다.  
 
-> upper_buffer 배열을 생성하여 로드되는 이미지를 대문자로 변경하여 오류를 줄입니다.  
+> upper_buffer 배열을 통해 로드되는 이미지를 대문자로 변경하여 오류를 줄입니다.  
 
 ### unload_driver
 Driver를 Unload할 때 정상적으로 콜백루틴을 제거하는 함수(`PsRemoveLoadImageNotifyRoutine`)가 포함되어 있습니다.  

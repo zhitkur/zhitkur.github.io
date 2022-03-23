@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Device Object
+title: Device Extension
 ---
 
 ### Overview

@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Windows driver - Callback routine
+title: Windows driver - Callback
 ---
 
 ### Overview
-윈도우 드라이버의 `콜백`루틴을 생성하여 로드되는 이미지에 대한 알림을 받는 코드를 작성.  
+윈도우 드라이버의 `콜백` 루틴을 생성하여 로드되는 이미지에 대한 알림을 받는 코드를 작성.  
 > 백신 프로그램이나, 안티치트등과 같은 프로그램에서도 사용되는 루틴입니다.  
 > 이미지는 PE Image를 뜻하고, 프로세스 또는 쓰레드가 생성될 때를 의미합니다.  
 
